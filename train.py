@@ -54,17 +54,12 @@ def create_directory_structure():
 def download_sample_dataset():
     """Download sample license plate dataset from Roboflow or similar source"""
     print("Setting up sample dataset...")
-    
-    # Sample dataset URLs (replace with actual dataset)
+
     sample_datasets = {
-        'roboflow_license_plates': 'https://public.roboflow.com/ds/YOUR_DATASET_ID',
+        'roboflow_license_plates': 'https://public.roboflow.com/ds/dataset_id_ofcourse_yours',
         'kaggle_license_plates': 'https://www.kaggle.com/datasets/sample-license-plates'
     }
-    
-    # For demonstration, create sample data structure
     dataset_dir = Path('datasets/license_plates')
-    
-    # Create sample dataset configuration
     create_sample_data(dataset_dir)
     
     print("Sample dataset created. Replace with your actual dataset.")
@@ -120,14 +115,15 @@ Values should be normalized (0-1 range).
 
 def create_dataset_yaml():
     """Create dataset configuration YAML file"""
+
     
     dataset_config = {
         'path': str(Path('datasets/license_plates').absolute()),
         'train': 'images/train',
         'val': 'images/val',
-        'test': '',  # Optional
-        'nc': 1,  # Number of classes (license plate)
-        'names': ['license_plate']  # Class names
+        'test': 'images/test',#optional but recommanded
+        'nc': 1,
+        'names': ['license_plate']
     }
     
     yaml_path = Path('datasets/license_plates/data.yaml')
@@ -149,10 +145,9 @@ def download_yolo_model():
     print(f"Downloading {CONFIG['model_name']}...")
     
     try:
-        # YOLO will auto-download when first used
-        model = YOLO('yolov8n.pt')  # This downloads automatically
-        
-        # Save to models directory
+        model = YOLO('yolov8n.pt')  
+        # This downloads automatically, i recommend using yolov8s or yolov8m but i mention yolov8n for faster performance as my dataset was clean
+
         shutil.copy('yolov8n.pt', model_path)
         print(f"Model saved to: {model_path}")
         
@@ -321,6 +316,9 @@ def test_trained_model(model_path, test_images_dir=None):
     except Exception as e:
         print(f"Testing error: {e}")
 
+
+
+
 def main():
     """Main training pipeline"""
     parser = argparse.ArgumentParser(description='YOLOv8n License Plate Training')
@@ -338,6 +336,7 @@ def main():
         CONFIG['batch_size'] = args.batch_size
     if args.image_size:
         CONFIG['image_size'] = args.image_size
+        
     if args.device != 'auto':
         CONFIG['device'] = args.device
     
