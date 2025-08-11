@@ -51,7 +51,6 @@ incomplete_folder = os.path.join(output_folder, 'Incomplete_plate')
 Path(output_folder).mkdir(exist_ok=True)
 Path(incomplete_folder).mkdir(exist_ok=True)
 
-# Multi-GPU setup for T4*2 because i used it on kaggle notebook
 device_count = torch.cuda.device_count() if torch.cuda.is_available() else 0
 print(f"Available GPUs: {device_count}")
 
@@ -106,7 +105,7 @@ def init_gpu_resources():
         models[gpu_id] = YOLO('/content/license_plate_detector.pt').to(device)
 
         ocrs[gpu_id] = PaddleOCR(
-            use_angle_cls=True,
+            use_textline_orientation=True,
             lang='en',
             use_gpu=True,
             gpu_mem=4000,#4 gig per gpu
@@ -304,7 +303,6 @@ def distribute_work(image_paths, num_gpus):
     if num_gpus <= 1:
         return [image_paths]
 
-    # Split work evenly across GPUs
     chunk_size = len(image_paths) // num_gpus
     chunks = []
 
